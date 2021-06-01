@@ -10,11 +10,12 @@ import './Toolbar.css';
 function Toolbar(props) {
   async function uploadTileImage(index, file) {
     if (!file) return;
-
-    await firebase.storage().ref('tiles/tile').put(file).then(snapshot => {
+    // put file into storage
+    await firebase.storage().ref(`tiles/tile${index}`).put(file).then(snapshot => {
+      // update tile url in firestore
       snapshot.ref.getDownloadURL().then(url => {
-        const mapRef = firebase.firestore().collection('maps').doc('map');
-        mapRef.update({
+        const imagesRef = firebase.firestore().collection('data').doc('images');
+        imagesRef.update({
           [`tile${index}`]: url
         });
       });
