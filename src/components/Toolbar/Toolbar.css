@@ -1,0 +1,70 @@
+.Toolbar {
+  background: #202225;
+  width: fit-content;
+  margin: 20px auto 0 auto;
+  padding: 10px 2px 4px 2px;
+  border-radius: 5px;
+}
+
+.Toolbar p {
+  margin: 0;
+}
+
+.Toolbar .tile-select {
+  display: flex;
+  align-items: center;
+}
+
+.Toolbar .tile-display {
+  display: inline-block;
+  margin: 0 5px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Toolbar .tile-display .delete-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.Toolbar .tile-display .delete-btn svg {
+  color: #ddd;
+  padding: 0;
+}
+
+.Toolbar .tile-btn {
+  padding: 0;
+  border: 0;
+  height: 24px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.Toolbar .tile-btn img, .Toolbar .tile-btn svg {
+  width: 24px;
+  height: 24px;
+  background: #36393f;
+  border-radius: 2px;
+  color: #ddd;
+  image-rendering: pixelated;
+}
+
+.Toolbar .tile-btn.selected img, .Toolbar .tile-btn.selected svg {
+  border: 2px solid #fff;
+}
+
+.Toolbar label {
+  cursor: pointer;
+}
+
+.Toolbar label svg {
+  color: #ddd;
+}
+
+.Toolbar .file-input {
+  display: none;
+}
