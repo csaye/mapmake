@@ -17,11 +17,11 @@ const grid = 32;
 let canvas;
 let ctx;
 
-const tileCount = 1;
-let tiles = [];
+const tileCount = 10;
 
 function Canvas() {
   const [tileIndex, setTileIndex] = useState(-1);
+  const [tiles, setTiles] = useState([]);
 
   const mapDoc = firebase.firestore().collection('maps').doc('map');
   const [mapData] = useDocumentData(mapDoc);
@@ -29,15 +29,16 @@ function Canvas() {
   const canvasRef = useRef();
 
   function loadTiles() {
-    tiles = [];
+    const tileImages = [];
     for (let i = 0; i < tileCount; i++) {
       const tileURL = mapData[`tile${i}`];
       if (tileURL) {
-        let tile = new Image();
-        tile.src = tileURL;
-        tiles.push(tile);
-      } else tiles.push(null);
+        const tileImage = new Image();
+        tileImage.src = tileURL;
+        tileImages.push(tileImage);
+      } else tileImages.push(null);
     }
+    setTiles(tileImages);
   }
 
   function drawTile(e) {
@@ -58,6 +59,13 @@ function Canvas() {
     }
   }
 
+  function clearTiles() {
+    if (window.confirm('Clear all tiles?')) {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, width, height);
+    }
+  }
+
   // get canvas and context on start
   useEffect(() => {
     canvas = canvasRef.current;
@@ -71,30 +79,17 @@ function Canvas() {
 
   return (
     <div className="Canvas">
-      <Toolbar tileCount={tileCount} />
+      <Toolbar
+        tiles={tiles}
+        tileIndex={tileIndex}
+        setTileIndex={setTileIndex}
+        clearTiles={clearTiles}
+      />
       <canvas
         ref={canvasRef}
         width={width}
         height={height}
         onMouseDown={e => drawTile(e)}
-      />
-      {
-        tileIndex === -1 ?
-        <p>erasing</p> :
-        tiles[tileIndex] &&
-        <img src={tiles[tileIndex].src} alt="" />
-      }
-      <input
-        type="number"
-        step="1"
-        min="-1"
-        max={tileCount - 1}
-        value={tileIndex}
-        onChange={e => {
-          let val = e.target.value;
-          let intval = parseInt(val);
-          if (!isNaN(intval)) setTileIndex(intval);
-        }}
       />
     </div>
   );

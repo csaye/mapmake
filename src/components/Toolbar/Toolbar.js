@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import LayersClearIcon from '@material-ui/icons/LayersClear';
+import DeleteIcon from '@material-ui/icons/Delete';
+import PublishIcon from '@material-ui/icons/Publish';
+import ClearIcon from '@material-ui/icons/Clear';
 
 import firebase from 'firebase/app';
 
 import './Toolbar.css';
 
-function Toolbar() {
-  const [file, setFile] = useState(undefined);
-
-  async function uploadFile(e) {
-    e.preventDefault();
+function Toolbar(props) {
+  async function uploadTileImage(index, file) {
     if (!file) return;
 
     await firebase.storage().ref('tiles/tile').put(file).then(snapshot => {
       snapshot.ref.getDownloadURL().then(url => {
-        firebase.firestore().collection('maps').doc('map').update({
-          tileURL: url
+        const mapRef = firebase.firestore().collection('maps').doc('map');
+        mapRef.update({
+          [`tile${index}`]: url
         });
       });
     });
@@ -23,14 +24,45 @@ function Toolbar() {
   return (
     <div className="Toolbar">
       <div className="tile-select">
-        <form onSubmit={uploadFile}>
-          <input
-            type="file"
-            onChange={e => setFile(e.target.files[0])}
-            required
-          />
-          <button type="submit">Upload</button>
-        </form>
+        <div className="tile-display">
+          <button
+            className={props.tileIndex === -1 ? 'tile-btn selected' : 'tile-btn'}
+            onClick={() => props.setTileIndex(-1)}
+          >
+            <LayersClearIcon />
+          </button>
+          <button className="delete-btn" onClick={props.clearTiles}>
+            <DeleteIcon />
+          </button>
+        </div>
+        {
+          props.tiles &&
+          props.tiles.map((tile, i) =>
+            <div className="tile-display" key={`tileform-${i}`}>
+              <button
+                type="button"
+                className={props.tileIndex === i ? 'tile-btn selected' : 'tile-btn'}
+                onClick={() => props.setTileIndex(i)}
+              >
+                {
+                  tile ?
+                  <img src={tile.src} alt="" /> :
+                  <ClearIcon />
+                }
+              </button>
+              <label htmlFor={`fileinput-${i}`}>
+                <PublishIcon />
+              </label>
+              <input
+                id={`fileinput-${i}`}
+                type="file"
+                className="file-input"
+                onChange={e => uploadTileImage(i, e.target.files[0])}
+                required
+              />
+            </div>
+          )
+        }
       </div>
     </div>
   );
