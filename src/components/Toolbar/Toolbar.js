@@ -19,6 +19,18 @@ function Toolbar(props) {
           <GetAppIcon />
         </button>
       </div>
+      <div className="container">
+        <label htmlFor="canvas-size-input">Canvas Size: {props.canvasSize}px</label>
+        <input
+          className="canvas-size-input"
+          type="range"
+          min="128"
+          max="1024"
+          step="128"
+          defaultValue="512"
+          onChange={e => props.updateCanvasSize(e.target.value)}
+        />
+      </div>
     </div>
   );
 }

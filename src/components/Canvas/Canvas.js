@@ -8,21 +8,17 @@ import { useDocumentData } from 'react-firebase-hooks/firestore';
 
 import './Canvas.css';
 
-// canvas grid dimensions
-const grid = 16;
-const gridWidth = 32;
-const gridHeight = 32;
-
-// canvas pixel dimensions
-const width = gridWidth * grid;
-const height = gridHeight * grid;
-
+// canvas reference
 let canvas;
 let ctx;
+
+// canvas pixel dimensions
+let gridSize = 32;
+let canvasPixels = 512;
+let gridPixels = canvasPixels / gridSize;
+
 let drawing = false;
-
 let lastX, lastY;
-
 const tileCount = 10;
 
 // initialize tile data as empty
@@ -31,6 +27,7 @@ for (let i = 0; i < gridWidth * gridHeight; i++) clearData += '-';
 let tileData = clearData;
 
 function Canvas() {
+  const [canvasSize, setCanvasSize] = useState(canvasPixels);
   const [loaded, setLoaded] = useState(false);
   const [tileIndex, setTileIndex] = useState(-1);
   const [tiles, setTiles] = useState(undefined);
@@ -77,9 +74,9 @@ function Canvas() {
   // clears tile at given x, y grid coordinates
   function clearTile(x, y) {
     ctx.fillStyle = '#ddd';
-    ctx.fillRect(x * grid, y * grid, grid, grid);
+    ctx.fillRect(x * gridPixels, y * gridPixels, gridPixels, gridPixels);
     ctx.fillStyle = '#fff';
-    ctx.fillRect(x * grid + 0.5, y * grid + 0.5, grid - 1, grid - 1);
+    ctx.fillRect(x * gridPixels + 0.5, y * gridPixels + 0.5, gridPixels - 1, gridPixels - 1);
   }
 
   // loads tiles
@@ -96,7 +93,7 @@ function Canvas() {
           if (mapTile === '-') clearTile(x, y);
           else {
             const index = parseInt(mapTile);
-            ctx.drawImage(tiles[index], x * grid, y * grid, grid, grid);
+            ctx.drawImage(tiles[index], x * gridPixels, y * gridPixels, gridPixels, gridPixels);
           }
         }
       }
@@ -118,8 +115,8 @@ function Canvas() {
     let mouseY = e.clientY - canvas.offsetTop + window.scrollY;
 
     // round mouse position to nearest gridpoint
-    const gridX = Math.floor(mouseX / grid);
-    const gridY = Math.floor(mouseY / grid);
+    const gridX = Math.floor(mouseX / gridPixels);
+    const gridY = Math.floor(mouseY / gridPixels);
 
     // if moving and same grid square as last, return
     if (mode === 'move' && gridX === lastX && gridY === lastY) return;
@@ -131,11 +128,11 @@ function Canvas() {
     // draw tile
     if (tileIndex === -1) clearTile(gridX, gridY);
     else if (tiles[tileIndex]) {
-      ctx.drawImage(tiles[tileIndex], gridX * grid, gridY * grid, grid, grid);
+      ctx.drawImage(tiles[tileIndex], gridX * gridPixels, gridY * gridPixels, gridPixels, gridPixels);
     }
 
     // update tile data
-    const index = gridY * gridWidth + gridX;
+    const index = gridY * gridSize + gridX;
     setTileData(index, tileIndex);
   }
 
@@ -186,6 +183,12 @@ function Canvas() {
     link.click();
   }
 
+  // updates canvas to match given size
+  function updateCanvasSize(pixels) {
+    canvasPixels = pixels;
+    gridPixels = canvasPixels / gridSize;
+    setCanvasSize(canvasPixels);
+  }
   // get canvas and context on start
   useEffect(() => {
     canvas = canvasRef.current;
@@ -213,17 +216,17 @@ function Canvas() {
       {!loaded && <p className="loading-text">Loading...</p>}
       {
         loaded &&
-        <Tilebar
-          tiles={tiles}
-          tileIndex={tileIndex}
-          setTileIndex={setTileIndex}
-          clearTiles={clearTiles}
+        <Toolbar
+          downloadPNG={downloadPNG}
+          downloadJSON={downloadJSON}
+          canvasSize={canvasSize}
+          updateCanvasSize={updateCanvasSize}
         />
       }
       <canvas
         ref={canvasRef}
-        width={width}
-        height={height}
+        width={canvasSize}
+        height={canvasSize}
         onMouseDown={e => sketch('down', e)}
         onMouseMove={e => sketch('move', e)}
         onMouseUp={e => endSketch()}
@@ -232,9 +235,11 @@ function Canvas() {
       />
       {
         loaded &&
-        <Toolbar
-          downloadPNG={downloadPNG}
-          downloadJSON={downloadJSON}
+        <Tilebar
+          tiles={tiles}
+          tileIndex={tileIndex}
+          setTileIndex={setTileIndex}
+          clearTiles={clearTiles}
         />
       }
     </div>
