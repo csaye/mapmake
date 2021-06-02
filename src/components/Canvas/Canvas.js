@@ -22,12 +22,12 @@ let lastX, lastY;
 const tileCount = 10;
 
 // initialize tile data as empty
-let clearData = '';
-for (let i = 0; i < gridWidth * gridHeight; i++) clearData += '-';
-let tileData = clearData;
+let tileData = '-'.repeat(gridSize * gridSize);
 
 function Canvas() {
   const [canvasSize, setCanvasSize] = useState(canvasPixels);
+  const [gridSizeHook, setGridSizeHook] = useState(gridSize);
+
   const [loaded, setLoaded] = useState(false);
   const [tileIndex, setTileIndex] = useState(-1);
   const [tiles, setTiles] = useState(undefined);
@@ -58,6 +58,7 @@ function Canvas() {
 
   // loads tile images
   async function loadImages() {
+    console.log('loading images');
     const tileImages = [];
     for (let i = 0; i < tileCount; i++) {
       const tileURL = imagesData[`tile${i}`];
@@ -81,11 +82,21 @@ function Canvas() {
 
   // loads tiles
   function loadTiles(loadAll) {
+    console.log(loadAll ? 'loading all tiles' : 'loading tiles');
     const mapTiles = mapData.tiles;
+    // if map size different, adjust local grid size
+    if (mapTiles.length !== tileData.length) {
+      const newGridSize = Math.floor(Math.sqrt(mapTiles.length))
+      gridSize = newGridSize;
+      gridPixels = canvasPixels / newGridSize;
+      tileData = '-'.repeat(mapTiles.length);
+      setGridSizeHook(newGridSize);
+      return;
+    }
     // for each tile on canvas
-    for (let x = 0; x < gridWidth; x++) {
-      for (let y = 0; y < gridHeight; y++) {
-        const i = y * gridWidth + x;
+    for (let x = 0; x < gridSize; x++) {
+      for (let y = 0; y < gridSize; y++) {
+        const i = y * gridSize + x;
         // if tile data does not match map data
         const mapTile = mapTiles[i];
         if (loadAll || tileData[i] !== mapTile) {
@@ -147,13 +158,13 @@ function Canvas() {
 
   // clears all tiles on screen
   async function clearTiles() {
-    if (window.confirm('Clear all tiles?')) {
-      // update data in firebase
-      tileData = clearTiles;
-      await mapDoc.update({
-        tiles: clearData
-      });
-    }
+    // confirm clear
+    if (!window.confirm('Clear all tiles?')) return;
+    // update tile data in firebase
+    const clearData = '-'.repeat(gridSize * gridSize);
+    await mapDoc.update({
+      tiles: clearData
+    });
   }
 
   // downloads canvas as a png
@@ -189,11 +200,30 @@ function Canvas() {
     gridPixels = canvasPixels / gridSize;
     setCanvasSize(canvasPixels);
   }
+
+  // updates tile grid to match given size
+  async function updateGridSize(sizePower) {
+    // confirm switch
+    if (!window.confirm('Updating grid size will delete tile data. Continue?')) return;
+
+    // update canvas dimensions
+    gridSize = Math.pow(2, sizePower);
+    gridPixels = canvasPixels / gridSize;
+
+    // update tile data
+    tileData = '-'.repeat(gridSize * gridSize);
+    await mapDoc.update({
+      tiles: tileData
+    });
+
+    setGridSizeHook(gridSize);
+  }
+
   // get canvas and context on start
   useEffect(() => {
     canvas = canvasRef.current;
     ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    // ctx.imageSmoothingEnabled = false;
   }, []);
 
   // load tile images when image data changes
@@ -206,10 +236,10 @@ function Canvas() {
     if (mapData && tiles) loadTiles(false);
   }, [mapData]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // reload all tiles when images update
+  // reload all tiles when images or canvas dimensions update
   useEffect(() => {
     if (tiles) loadTiles(true);
-  }, [tiles]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tiles, canvasSize, gridSizeHook]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="Canvas">
@@ -221,6 +251,8 @@ function Canvas() {
           downloadJSON={downloadJSON}
           canvasSize={canvasSize}
           updateCanvasSize={updateCanvasSize}
+          gridSize={gridSizeHook}
+          updateGridSize={updateGridSize}
         />
       }
       <canvas

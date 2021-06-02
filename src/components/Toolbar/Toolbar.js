@@ -31,6 +31,18 @@ function Toolbar(props) {
           onChange={e => props.updateCanvasSize(e.target.value)}
         />
       </div>
+      <div className="container">
+        <label htmlFor="grid-size-input">Grid Size: {props.gridSize} tiles</label>
+        <input
+          className="grid-size-input"
+          type="range"
+          min="4"
+          max="6"
+          step="1"
+          value={Math.round(Math.log(props.gridSize) / Math.log(2))}
+          onChange={e => props.updateGridSize(e.target.value)}
+        />
+      </div>
     </div>
   );
 }
