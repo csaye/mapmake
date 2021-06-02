@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import Tilebar from '../Tilebar/Tilebar.js';
 import Toolbar from '../Toolbar/Toolbar.js';
 
 import firebase from 'firebase/app';
@@ -181,15 +182,15 @@ function Canvas() {
 
   return (
     <div className="Canvas">
+      {!loaded && <p className="loading-text">Loading...</p>}
       {
-        loaded ?
-        <Toolbar
+        loaded &&
+        <Tilebar
           tiles={tiles}
           tileIndex={tileIndex}
           setTileIndex={setTileIndex}
           clearTiles={clearTiles}
-        /> :
-        <p className="loading-text">Loading...</p>
+        />
       }
       <canvas
         ref={canvasRef}

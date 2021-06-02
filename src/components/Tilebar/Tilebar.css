@@ -1,0 +1,72 @@
+.Tilebar {
+  background: #202225;
+  width: fit-content;
+  margin: 20px auto 0 auto;
+  padding: 12px 4px 4px 4px;
+  border-radius: 5px;
+}
+
+.Tilebar p {
+  margin: 0;
+}
+
+.Tilebar .tile-select {
+  display: flex;
+  align-items: center;
+}
+
+.Tilebar .tile-display {
+  display: inline-block;
+  margin: 0 5px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Tilebar .tile-display .delete-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.Tilebar .tile-display .delete-btn svg {
+  color: #ddd;
+  padding: 0;
+}
+
+.Tilebar .tile-btn {
+  padding: 0;
+  border: 0;
+  height: 24px;
+  margin-bottom: 5px;
+  background: transparent;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.Tilebar .tile-btn img, .Tilebar .tile-btn svg {
+  width: 24px;
+  height: 24px;
+  background: #36393f;
+  border-radius: 2px;
+  color: #ddd;
+  image-rendering: pixelated;
+}
+
+.Tilebar .tile-btn.selected img, .Tilebar .tile-btn.selected svg {
+  border: 2px solid #fff;
+}
+
+.Tilebar label {
+  cursor: pointer;
+}
+
+.Tilebar label svg {
+  color: #ddd;
+}
+
+.Tilebar .file-input {
+  display: none;
+}
