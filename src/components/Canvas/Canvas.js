@@ -72,9 +72,16 @@ function Canvas() {
     setTiles(tileImages);
   }
 
+  // clears tile at given x, y grid coordinates
+  function clearTile(x, y) {
+    ctx.fillStyle = '#ddd';
+    ctx.fillRect(x * grid, y * grid, grid, grid);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x * grid + 0.5, y * grid + 0.5, grid - 1, grid - 1);
+  }
+
   // loads tiles
   function loadTiles(loadAll) {
-    console.log(loadAll ? 'loading all tiles' : 'loading tiles');
     const mapTiles = mapData.tiles;
     // for each tile on canvas
     for (let x = 0; x < gridWidth; x++) {
@@ -84,10 +91,8 @@ function Canvas() {
         const mapTile = mapTiles[i];
         if (loadAll || tileData[i] !== mapTile) {
           // load image
-          if (mapTile === '-') {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(x * grid, y * grid, grid, grid);
-          } else {
+          if (mapTile === '-') clearTile(x, y);
+          else {
             const index = parseInt(mapTile);
             ctx.drawImage(tiles[index], x * grid, y * grid, grid, grid);
           }
@@ -122,22 +127,14 @@ function Canvas() {
     lastY = gridY;
 
     // draw tile
-    if (tileIndex === -1) {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(mouseX, mouseY, grid, grid);
-    } else if (tiles[tileIndex]) {
-      ctx.drawImage(tiles[tileIndex], mouseX, mouseY, grid, grid);
+    if (tileIndex === -1) clearTile(gridX, gridY);
+    else if (tiles[tileIndex]) {
+      ctx.drawImage(tiles[tileIndex], gridX * grid, gridY * grid, grid, grid);
     }
 
-    // update tile in firebase
+    // update tile data
     const index = gridY * gridWidth + gridX;
-    const beforeTileData = tileData;
     setTileData(index, tileIndex);
-    if (beforeTileData !== tileData) {
-      await mapDoc.update({
-        tiles: tileData
-      });
-    }
   }
 
   // called after sketch ends
@@ -149,11 +146,9 @@ function Canvas() {
     });
   }
 
+  // clears all tiles on screen
   async function clearTiles() {
     if (window.confirm('Clear all tiles?')) {
-      // clear canvas
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, width, height);
       // update data in firebase
       tileData = clearTiles;
       await mapDoc.update({
