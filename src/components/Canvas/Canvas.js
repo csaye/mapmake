@@ -58,7 +58,6 @@ function Canvas() {
 
   // loads tile images
   async function loadImages() {
-    console.log('loading images');
     const tileImages = [];
     for (let i = 0; i < tileCount; i++) {
       const tileURL = imagesData[`tile${i}`];
@@ -82,11 +81,10 @@ function Canvas() {
 
   // loads tiles
   function loadTiles(loadAll) {
-    console.log(loadAll ? 'loading all tiles' : 'loading tiles');
     const mapTiles = mapData.tiles;
     // if map size different, adjust local grid size
     if (mapTiles.length !== tileData.length) {
-      const newGridSize = Math.floor(Math.sqrt(mapTiles.length))
+      const newGridSize = Math.round(Math.sqrt(mapTiles.length));
       gridSize = newGridSize;
       gridPixels = canvasPixels / newGridSize;
       tileData = '-'.repeat(mapTiles.length);
@@ -201,17 +199,55 @@ function Canvas() {
     setCanvasSize(canvasPixels);
   }
 
+  // scales down a string representing 2d space
+  function scaleDown2D(str, side, factor) {
+    let out = '';
+    for (let x = 0; x < side; x += factor) {
+      for (let y = 0; y < side; y += factor) {
+        const i = x * side + y;
+        out += str[i];
+      }
+    }
+    return out;
+  }
+
+  // scales up a string representing 2d space
+  function scaleUp2D(str, side, factor) {
+    let out = '';
+    for (let x = 0; x < side * factor; x++) {
+      for (let y = 0; y < side * factor; y++) {
+        const x2 = Math.floor(x / factor);
+        const y2 = Math.floor(y / factor);
+        const i = x2 * side + y2;
+        out += str[i];
+      }
+    }
+    return out;
+  }
+
   // updates tile grid to match given size
   async function updateGridSize(sizePower) {
     // confirm switch
-    if (!window.confirm('Updating grid size will delete tile data. Continue?')) return;
+    if (!window.confirm('Update grid size?')) return;
 
     // update canvas dimensions
     gridSize = Math.pow(2, sizePower);
     gridPixels = canvasPixels / gridSize;
 
     // update tile data
-    tileData = '-'.repeat(gridSize * gridSize);
+    const gridGrid = gridSize * gridSize;
+    const tileSide = Math.round(Math.sqrt(tileData.length));
+    if (tileData.length !== gridGrid) {
+      // scale tile data up
+      if (tileData.length < gridGrid) {
+        const factor = gridSize / tileSide;
+        tileData = scaleUp2D(tileData, tileSide, factor);
+      // scale tile data down
+      } else {
+        const factor = tileSide / gridSize;
+        tileData = scaleDown2D(tileData, tileSide, factor);
+      }
+    }
     await mapDoc.update({
       tiles: tileData
     });
@@ -223,7 +259,7 @@ function Canvas() {
   useEffect(() => {
     canvas = canvasRef.current;
     ctx = canvas.getContext('2d');
-    // ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
   }, []);
 
   // load tile images when image data changes
