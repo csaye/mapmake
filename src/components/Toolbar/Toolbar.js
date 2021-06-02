@@ -20,9 +20,8 @@ function Toolbar(props) {
         </button>
       </div>
       <div className="container">
-        <label htmlFor="canvas-size-input">Canvas Size: {props.canvasSize}px</label>
+        <p>Canvas Size: {props.canvasSize}px</p>
         <input
-          className="canvas-size-input"
           type="range"
           min="128"
           max="1024"
@@ -32,9 +31,8 @@ function Toolbar(props) {
         />
       </div>
       <div className="container">
-        <label htmlFor="grid-size-input">Grid Size: {props.gridSize} tiles</label>
+        <p>Grid Size: {props.gridSize} tiles</p>
         <input
-          className="grid-size-input"
           type="range"
           min="4"
           max="6"

@@ -3,4 +3,7 @@
   min-height: 100%;
   text-align: center;
   overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
