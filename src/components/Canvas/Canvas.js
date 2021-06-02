@@ -54,6 +54,7 @@ function Canvas() {
       const image = new Image();
       image.onload = () => resolve(image);
       image.onerror = reject;
+      image.crossOrigin = 'anonymous';
       image.src = url;
     });
   }
@@ -158,6 +159,33 @@ function Canvas() {
     }
   }
 
+  // downloads canvas as a png
+  function downloadPNG() {
+    // get object url
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      // download from link element
+      const link = document.createElement('a');
+      link.download = 'map.png';
+      link.href = url;
+      link.click();
+    })
+  }
+
+  // downloads canvas as a JSON
+  function downloadJSON() {
+    // construct tiles json data string
+    const chars = [];
+    for (let char of mapData.tiles) chars.push(char);
+    const tilesJson = { tiles: chars };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tilesJson));
+    // download from link element
+    const link = document.createElement('a');
+    link.download = 'map.json';
+    link.href = dataStr;
+    link.click();
+  }
+
   // get canvas and context on start
   useEffect(() => {
     canvas = canvasRef.current;
@@ -202,6 +230,13 @@ function Canvas() {
         onMouseLeave={e => endSketch()}
         style={{display: loaded ? 'inline' : 'none'}}
       />
+      {
+        loaded &&
+        <Toolbar
+          downloadPNG={downloadPNG}
+          downloadJSON={downloadJSON}
+        />
+      }
     </div>
   );
 }
