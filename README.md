@@ -1,8 +1,10 @@
-# Getting Started with Create React App
+# MapMake
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A collaborative, online tilemap editor.
 
 ## Available Scripts
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 In the project directory, you can run:
 
