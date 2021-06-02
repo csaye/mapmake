@@ -8,9 +8,9 @@ import { useDocumentData } from 'react-firebase-hooks/firestore';
 import './Canvas.css';
 
 // canvas grid dimensions
-const grid = 32;
-const gridWidth = 16;
-const gridHeight = 16;
+const grid = 16;
+const gridWidth = 32;
+const gridHeight = 32;
 
 // canvas pixel dimensions
 const width = gridWidth * grid;
@@ -18,6 +18,9 @@ const height = gridHeight * grid;
 
 let canvas;
 let ctx;
+let drawing = false;
+
+let lastX, lastY;
 
 const tileCount = 10;
 
@@ -56,7 +59,6 @@ function Canvas() {
 
   // loads tile images
   async function loadImages() {
-    console.log('loading images');
     const tileImages = [];
     for (let i = 0; i < tileCount; i++) {
       const tileURL = imagesData[`tile${i}`];
@@ -97,8 +99,13 @@ function Canvas() {
     setLoaded(true);
   }
 
-  // draws a tile to the canvas
-  async function drawTile(e) {
+  // sketches tiles to the canvas
+  async function sketch(mode, e) {
+    // start drawing if mouse down
+    if (mode === 'down') drawing = true;
+    // return if mouse moving and not drawing
+    else if (mode === 'move' && !drawing) return;
+
     // get current mouse position
     let mouseX = e.clientX - canvas.offsetLeft + window.scrollX;
     let mouseY = e.clientY - canvas.offsetTop + window.scrollY;
@@ -106,8 +113,13 @@ function Canvas() {
     // round mouse position to nearest gridpoint
     const gridX = Math.floor(mouseX / grid);
     const gridY = Math.floor(mouseY / grid);
-    mouseX = gridX * grid;
-    mouseY = gridY * grid;
+
+    // if moving and same grid square as last, return
+    if (mode === 'move' && gridX === lastX && gridY === lastY) return;
+
+    // update last position
+    lastX = gridX;
+    lastY = gridY;
 
     // draw tile
     if (tileIndex === -1) {
@@ -126,6 +138,15 @@ function Canvas() {
         tiles: tileData
       });
     }
+  }
+
+  // called after sketch ends
+  async function endSketch() {
+    drawing = false;
+    // update tile data in firebase
+    await mapDoc.update({
+      tiles: tileData
+    });
   }
 
   async function clearTiles() {
@@ -179,7 +200,10 @@ function Canvas() {
         ref={canvasRef}
         width={width}
         height={height}
-        onMouseDown={e => drawTile(e)}
+        onMouseDown={e => sketch('down', e)}
+        onMouseMove={e => sketch('move', e)}
+        onMouseUp={e => endSketch()}
+        onMouseLeave={e => endSketch()}
         style={{display: loaded ? 'inline' : 'none'}}
       />
     </div>
