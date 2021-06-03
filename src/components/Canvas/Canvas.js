@@ -181,9 +181,12 @@ function Canvas() {
   // downloads canvas as a JSON
   function downloadJSON() {
     // construct tiles json data string
-    const chars = [];
-    for (let char of mapData.tiles) chars.push(char);
-    const tilesJson = { tiles: chars };
+    const indexes = [];
+    for (let char of mapData.tiles) {
+      if (char === '-') indexes.push(-1);
+      else indexes.push(parseInt(char));
+    }
+    const tilesJson = { tiles: indexes };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tilesJson));
     // download from link element
     const link = document.createElement('a');

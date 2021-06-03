@@ -43,7 +43,6 @@
   margin-bottom: 5px;
   background: transparent;
   box-sizing: border-box;
-  overflow: auto;
 }
 
 .Tilebar .tile-btn img, .Tilebar .tile-btn svg {

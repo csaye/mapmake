@@ -35,7 +35,7 @@ function Toolbar(props) {
         <input
           type="range"
           min="4"
-          max="6"
+          max="7"
           step="1"
           value={Math.round(Math.log(props.gridSize) / Math.log(2))}
           onChange={e => props.updateGridSize(e.target.value)}
