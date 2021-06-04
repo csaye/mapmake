@@ -51,12 +51,13 @@ function Tilebar(props) {
                   <ClearIcon />
                 }
               </button>
-              <label htmlFor={`fileinput-${i}`}>
+              <label htmlFor={`tileinput-${i}`}>
                 <PublishIcon />
               </label>
               <input
-                id={`fileinput-${i}`}
+                id={`tileinput-${i}`}
                 type="file"
+                accept="image/*"
                 className="file-input"
                 onChange={e => uploadTileImage(i, e.target.files[0])}
                 required

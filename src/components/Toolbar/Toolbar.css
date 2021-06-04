@@ -15,11 +15,15 @@
   margin: 0 5px;
 }
 
+.Toolbar .file-input {
+  display: none;
+}
+
 .Toolbar svg {
   color: #ddd;
 }
 
-.Toolbar button {
+.Toolbar button, .Toolbar label {
   border: 0;
   margin-top: 5px;
   padding: 3px 3px 0 3px;

@@ -195,6 +195,32 @@ function Canvas() {
     link.click();
   }
 
+  // uploads given json as map data
+  function uploadJSON(file) {
+    // read file as text
+    const reader = new FileReader();
+    reader.readAsText(file);
+    // when reader loads file
+    reader.onload = e => {
+      // parse as json
+      const text = e.target.result;
+      const json = JSON.parse(text);
+      // if valid json
+      if (json && json.tiles) {
+        // read tile data
+        let newTileData = '';
+        for (const index of json.tiles) {
+          if (index === -1) newTileData += '-';
+          else newTileData += index.toString();
+        }
+        // update tile data in firebase
+        mapDoc.update({
+          tiles: newTileData
+        });
+      }
+    }
+  }
+
   // updates canvas to match given size
   function updateCanvasSize(pixels) {
     canvasPixels = pixels;
@@ -288,6 +314,7 @@ function Canvas() {
         <Toolbar
           downloadPNG={downloadPNG}
           downloadJSON={downloadJSON}
+          uploadJSON={uploadJSON}
           canvasSize={canvasSize}
           updateCanvasSize={updateCanvasSize}
           gridSize={gridSizeHook}
