@@ -31,7 +31,7 @@ function App() {
     <div className="App">
       {
         !loaded ?
-        <p className="loading-text">Loading...</p> :
+        <p className="loading-text">Loading auth...</p> :
         firebase.auth().currentUser ?
         <Select /> :
         <Auth />

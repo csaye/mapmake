@@ -14,15 +14,15 @@ function Select() {
 
   const uid = firebase.auth().currentUser.uid;
   const mapsRef = firebase.firestore().collection('maps');
-  const mapsQuery = mapsRef.where('users', 'array-contains', uid);//.orderBy('name');
+  const mapsQuery = mapsRef.where('users', 'array-contains', uid).orderBy('name');
   const [maps] = useCollectionData(mapsQuery, { idField: 'id' });
 
   const usersRef = firebase.firestore().collection('users');
-  const userRef = usersRef.doc(uid);
-  const [userData] = useDocumentData(userRef);
+  const userDoc = usersRef.doc(uid);
+  const [userData] = useDocumentData(userDoc);
 
   async function selectMap(map) {
-    await userRef.update({
+    await userDoc.update({
       map: map.id
     });
   }
@@ -49,13 +49,16 @@ function Select() {
         tile8: '',
         tile9: ''
       });
+      userDoc.update({
+        map: doc.id
+      });
     });
   }
 
   async function checkUserMap() {
     // if user map invalid, set to none
     if (userData.map && !maps.some(map => map.id === userData.map)) {
-      await userRef.update({
+      await userDoc.update({
         map: ''
       });
     }
@@ -65,9 +68,9 @@ function Select() {
     if (userData) checkUserMap();
   }, [userData]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!userData) return <p className="loading-text">Loading...</p>;
+  if (!userData) return <p className="loading-text">Loading maps...</p>;
   if (userData.map) return <Canvas map={userData.map} />;
-  if (!maps) return <p className="loading-text">Loading...</p>;
+  if (!maps) return <p className="loading-text">Loading maps...</p>;
 
   return (
     <div className="Select">

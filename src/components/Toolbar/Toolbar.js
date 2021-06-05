@@ -58,7 +58,7 @@ function Toolbar(props) {
     const memberUid = matches[0].uid;
     // update document in firebase
     await mapDoc.update({
-      members: firebase.firestore.FieldValue.arrayUnion(memberUid)
+      users: firebase.firestore.FieldValue.arrayUnion(memberUid)
     });
   }
 
@@ -97,7 +97,7 @@ function Toolbar(props) {
         />
       </div>
       <div className="container">
-        <p>Canvas Size: {props.canvasSize}px</p>
+        <p>Canvas: {props.canvasSize}px</p>
         <input
           type="range"
           min="128"
@@ -108,25 +108,25 @@ function Toolbar(props) {
         />
       </div>
       <div className="container">
-        <p>Grid Size: {props.gridSize} tiles</p>
+        <p>Grid: {props.gridSize} tiles</p>
         <input
           type="range"
           min="4"
-          max="7"
+          max="8"
           step="1"
           value={Math.round(Math.log(props.gridSize) / Math.log(2))}
           onChange={e => props.updateGridSize(e.target.value)}
         />
       </div>
-      <button onClick={() => exitMap()}>
-        <ExitToAppIcon />
-      </button>
       <Popup
         trigger={
           <button className="editmap-btn">
             <EditIcon />
           </button>
         }
+        onOpen={() => {
+          if (mapData) setMapName(mapData.name);
+        }}
         modal
       >
         {
@@ -173,6 +173,9 @@ function Toolbar(props) {
           )
         }
       </Popup>
+      <button onClick={() => exitMap()}>
+        <ExitToAppIcon />
+      </button>
     </div>
   );
 }

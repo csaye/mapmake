@@ -309,7 +309,7 @@ function Canvas(props) {
 
   return (
     <div className="Canvas">
-      {!loaded && <p className="loading-text">Loading...</p>}
+      {!loaded && <p className="loading-text">Loading canvas...</p>}
       {
         loaded &&
         <Toolbar

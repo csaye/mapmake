@@ -1,8 +1,9 @@
 .App {
   background: #2f3136;
   min-height: 100%;
+  min-width: 100%;
+  width: fit-content;
   text-align: center;
-  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;
