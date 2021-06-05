@@ -1,7 +1,10 @@
 .Tilebar {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 72px;
   background: #202225;
-  width: fit-content;
-  margin: 0 auto 20px auto;
   padding: 12px 4px 4px 4px;
   border-radius: 5px;
 }
