@@ -1,0 +1,39 @@
+.Auth {
+  color: #ddd;
+}
+
+.Auth h1 {
+  margin: 0;
+}
+
+.Auth h2 {
+  margin: 0 0 5px 0;
+}
+
+.Auth hr {
+  margin: 10px 0;
+}
+
+.Auth img {
+  height: 60px;
+}
+
+.Auth form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Auth label {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.Auth button[type="submit"] {
+  margin-top: 10px;
+}
+
+.Auth .error-text {
+  color: red;
+  margin: 5px 0;
+}
