@@ -313,6 +313,7 @@ function Canvas(props) {
       {
         loaded &&
         <Toolbar
+          map={props.map}
           downloadPNG={downloadPNG}
           downloadJSON={downloadJSON}
           uploadJSON={uploadJSON}

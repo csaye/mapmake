@@ -18,6 +18,10 @@ import './Toolbar.css';
 function Toolbar(props) {
   const [error, setError] = useState('');
   const [mapName, setMapName] = useState('');
+  const [member, setMember] = useState('');
+
+  const usernamesRef = firebase.firestore().collection('usernames');
+  const [usernamesData] = useCollectionData(usernamesRef);
 
   const mapDoc = firebase.firestore().collection('maps').doc(props.map);
   const [mapData] = useDocumentData(mapDoc);
@@ -38,6 +42,31 @@ function Toolbar(props) {
     await mapDoc.update({
       name: newMapName
     });
+  }
+
+  // adds member to current map
+  async function addMember() {
+    const newMember = member;
+    setMember('');
+    // retrieve new member uid
+    const matches = usernamesData.filter(user => user.username === newMember);
+    if (matches.length === 0) {
+      setError(`No user @${newMember} found`)
+      setTimeout(() => setError(''), 2000);
+      return;
+    }
+    const memberUid = matches[0].uid;
+    // update document in firebase
+    await mapDoc.update({
+      members: firebase.firestore.FieldValue.arrayUnion(memberUid)
+    });
+  }
+
+  // returns username for user with given uid
+  function getUsername(userId) {
+    if (!usernamesData) return null;
+    const matches = usernamesData.filter(user => user.uid === userId);
+    return matches.length === 0 ? null : matches[0].username;
   }
 
   return (
@@ -120,6 +149,26 @@ function Toolbar(props) {
                 />
                 <button>Update Map</button>
               </form>
+              <form onSubmit={e => {
+                e.preventDefault();
+                addMember();
+              }}>
+                <input
+                  placeholder="username"
+                  value={member}
+                  onChange={e => setMember(e.target.value)}
+                  required
+                />
+                <button>Add Member</button>
+              </form>
+              {error && <p style={{margin: '10px 0 0 0', color: 'red'}}>{error}</p>}
+              <p style={{margin: '10px 0'}}><u>Members</u></p>
+              {
+                mapData &&
+                <p style={{margin: '0'}}>
+                  {mapData.users.map(u => getUsername(u)).join(', ')}
+                </p>
+              }
             </div>
           )
         }
