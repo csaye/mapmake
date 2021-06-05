@@ -2,7 +2,7 @@
   background: #202225;
   width: fit-content;
   margin: 20px auto 0 auto;
-  padding: 8px 4px 8px 4px;
+  padding: 8px 6px;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -16,6 +16,10 @@
   margin: 0 5px;
 }
 
+.Toolbar > .container > button, .Toolbar > .container > label {
+  margin-top: 5px;
+}
+
 .Toolbar .file-input {
   display: none;
 }
@@ -26,14 +30,21 @@
 
 .Toolbar button, .Toolbar label {
   border: 0;
-  margin-top: 5px;
   padding: 3px 3px 0 3px;
   background: #36393f;
   border-radius: 2px;
   cursor: pointer;
 }
 
+.Toolbar input {
+  cursor: pointer;
+}
+
 .Toolbar p {
   color: #ddd;
   margin: 0;
+}
+
+.Toolbar > button {
+  margin: 0 5px;
 }
