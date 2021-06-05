@@ -1,7 +1,32 @@
+.Select {
+  max-width: 300px;
+  background: #202225;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.Select > h1 {
+  color: #ddd;
+  margin: 0;
+}
+
+.Select > hr {
+  margin: 10px 20px;
+}
+
+.Select > form {
+  margin: 15px 0;
+}
+
+.Select > form > button {
+  display: block;
+  margin: 5px auto 0 auto;
+}
+
+.Select .select-btn {
+  margin: 2px;
+}
+
 .Select .signout-btn {
   padding: 3px 3px 0 3px;
-  background: #202225;
-  color: #ddd;
-  border: 0;
-  border-radius: 2px;
 }

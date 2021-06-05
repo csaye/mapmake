@@ -29,14 +29,6 @@
   font-size: 24px;
   margin: 0 0 10px 0;
 }
-.modal input {
-  border: 0;
-  padding: 2px 3px;
-  border-radius: 3px;
-  outline: none;
-  background: #36393f;
-  color: #ddd;
-}
 .modal button {
   background: #202225;
   padding: 3px;

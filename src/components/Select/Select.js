@@ -74,23 +74,32 @@ function Select() {
 
   return (
     <div className="Select">
+      <h1>Select Map</h1>
+      <hr />
       {
         maps.map((m, i) =>
-          <button key={`selectmap-${i}`} onClick={() => selectMap(m)}>
+          <button
+            key={`selectmap-${i}`}
+            onClick={() => selectMap(m)}
+            className="select-btn clean-btn"
+          >
             {m.name}
           </button>
         )
       }
+      <hr />
       <form onSubmit={createMap}>
         <input
+          placeholder="map name"
           value={mapName}
           onChange={e => setMapName(e.target.value)}
           required
         />
-        <button>Create Map</button>
+        <button className="clean-btn">Create Map</button>
       </form>
+      <hr />
       <button
-        className="signout-btn"
+        className="signout-btn clean-btn"
         onClick={() => firebase.auth().signOut()}
       >
         <ExitToAppIcon />
