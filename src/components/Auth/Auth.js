@@ -17,12 +17,98 @@ function Auth() {
   const usernamesRef = firebase.firestore().collection('usernames');
   const [usernamesData] = useCollectionData(usernamesRef);
 
+  // attempts to sign up user
+  async function signUp(e) {
+    e.preventDefault();
+    setError('');
+
+    // verify password confirmation
+    if (password !== confirmPassword) {
+      setError("Passwords must match.");
+      return;
+    }
+    // verify username chars
+    if (!/^[A-Za-z0-9_]+$/.test(username)) {
+      setError("Username can only contain alphanumeric characters and underscore.");
+      return;
+    }
+    // verify username length
+    if (username.length < 2 || username.length > 16) {
+      setError("Username must be between 2 and 16 characters.");
+      return;
+    }
+    // verify username availability
+    if (usernamesData && usernamesData.some(data => data.username.toLower() === username.toLower())) {
+      setError("Username taken. Please try another.");
+      return;
+    }
+
+    // create user account
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+    // fail create user
+    } catch(e) {
+      setError(e.code);
+      return;
+    };
+    // create user user documents
+    const uid = firebase.auth().currentUser.uid;
+    await firebase.firestore().collection('users').doc(uid).set({
+      username: username,
+      uid: uid,
+      registered: new Date(),
+      map: ''
+    });
+    await firebase.firestore().collection('usernames').doc(uid).set({
+      username: username,
+      uid: uid
+    });
+  }
+
   return (
     <div className="Auth">
       <div className="center-box">
         <img src={logo} alt="logo" />
         <h1>MapMake</h1>
         <hr />
+        {
+          signingUp ?
+          <form onSubmit={signUp}>
+            <h2>Sign Up</h2>
+            <label htmlFor="signup-email">Email</label>
+            <input
+              id="signup-email"
+              placeholder="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <label htmlFor="signup-username">Username</label>
+            <input
+              placeholder="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+            />
+            <label htmlFor="signup-username">Password</label>
+            <input
+              placeholder="password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+            <input
+              placeholder="confirm password"
+              type="password"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              required
+            />
+            <button type="submit">Sign Up</button>
+          </form> :
+        }
         {error && <p className="error-text">{error}</p>}
         <hr />
         {
