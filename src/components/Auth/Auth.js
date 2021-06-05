@@ -64,7 +64,7 @@ function Auth() {
       return;
     }
     // verify username availability
-    if (usernamesData && usernamesData.some(data => data.username.toLower() === username.toLower())) {
+    if (usernamesData.some(user => user.username.toLowerCase() === username.toLowerCase())) {
       setError("Username taken. Please try another.");
       return;
     }

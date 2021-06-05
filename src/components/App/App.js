@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import Select from '../Select/Select.js';
 import Auth from '../Auth/Auth.js';
 
@@ -16,9 +18,20 @@ firebase.initializeApp(firebaseConfig);
 function App() {
   useAuthState(firebase.auth());
 
+  const [loaded, setLoaded] = useState(false);
+
+  // set loaded after auth initialization
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(() => {
+      setLoaded(true);
+    })
+  }, []);
+
   return (
     <div className="App">
       {
+        !loaded ?
+        <p className="loading-text">Loading...</p> :
         firebase.auth().currentUser ?
         <Select /> :
         <Auth />

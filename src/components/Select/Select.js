@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Canvas from '../Canvas/Canvas.js';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -52,43 +52,46 @@ function Select() {
     });
   }
 
-  if (!userData) return (
-    <div className="Select">
-      <p className="loading-text">Loading...</p>
-    </div>
-  )
+  async function checkUserMap() {
+    // if user map invalid, set to none
+    if (userData.map && !maps.some(map => map.id === userData.map)) {
+      await userRef.update({
+        map: ''
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (userData) checkUserMap();
+  }, [userData]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!userData) return <p className="loading-text">Loading...</p>;
+  if (userData.map) return <Canvas map={userData.map} />;
+  if (!maps) return <p className="loading-text">Loading...</p>;
 
   return (
     <div className="Select">
       {
-        userData.map ?
-        <Canvas map={userData.map} /> :
-        maps ?
-        <>
-          {
-            maps.map((m, i) =>
-              <button key={`selectmap-${i}`} onClick={() => selectMap(m)}>
-                {m.name}
-              </button>
-            )
-          }
-          <form onSubmit={createMap}>
-            <input
-              value={mapName}
-              onChange={e => setMapName(e.target.value)}
-              required
-            />
-            <button>Create Map</button>
-          </form>
-          <button
-            className="signout-btn"
-            onClick={() => firebase.auth().signOut()}
-          >
-            <ExitToAppIcon />
+        maps.map((m, i) =>
+          <button key={`selectmap-${i}`} onClick={() => selectMap(m)}>
+            {m.name}
           </button>
-        </> :
-        <p className="loading-text">Loading...</p>
+        )
       }
+      <form onSubmit={createMap}>
+        <input
+          value={mapName}
+          onChange={e => setMapName(e.target.value)}
+          required
+        />
+        <button>Create Map</button>
+      </form>
+      <button
+        className="signout-btn"
+        onClick={() => firebase.auth().signOut()}
+      >
+        <ExitToAppIcon />
+      </button>
     </div>
   );
 }
