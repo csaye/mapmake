@@ -17,6 +17,32 @@ function Auth() {
   const usernamesRef = firebase.firestore().collection('usernames');
   const [usernamesData] = useCollectionData(usernamesRef);
 
+  // attempts to sign in user
+  async function signIn(e) {
+    e.preventDefault();
+    setError('');
+
+    // try to sign in with email and password
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+    // handle sign in error
+    } catch(e) {
+      if (e.code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else if (e.code === 'auth/user-not-found') {
+        setError('Unknown email address.');
+      } else if (e.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.');
+      } else if (e.code === 'auth/too-many-requests') {
+        setError('Too many sign in requests. Please try again later.')
+      } else if (e.code === 'auth/weak-password') {
+        setError('Password must be at least 6 characters.')
+      } else {
+        setError(e.message);
+      }
+    }
+  }
+
   // attempts to sign up user
   async function signUp(e) {
     e.preventDefault();
@@ -108,6 +134,28 @@ function Auth() {
             />
             <button type="submit">Sign Up</button>
           </form> :
+          <form onSubmit={signIn}>
+            <h2>Sign In</h2>
+            <label htmlFor="signin-email">Email</label>
+            <input
+              id="signin-email"
+              placeholder="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <label htmlFor="signin-password">Password</label>
+            <input
+              id="signin-password"
+              placeholder="password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit">Sign In</button>
+          </form>
         }
         {error && <p className="error-text">{error}</p>}
         <hr />
