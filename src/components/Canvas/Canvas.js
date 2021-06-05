@@ -24,7 +24,7 @@ const tileCount = 10;
 // initialize tile data as empty
 let tileData = '-'.repeat(gridSize * gridSize);
 
-function Canvas() {
+function Canvas(props) {
   const [canvasSize, setCanvasSize] = useState(canvasPixels);
   const [gridSizeHook, setGridSizeHook] = useState(gridSize);
 
@@ -32,9 +32,10 @@ function Canvas() {
   const [tileIndex, setTileIndex] = useState(-1);
   const [tiles, setTiles] = useState(undefined);
 
-  const imagesDoc = firebase.firestore().collection('data').doc('images');
+  const dataCollection = firebase.firestore().collection('maps').doc(props.map).collection('data');
+  const imagesDoc = dataCollection.doc('images');
   const [imagesData] = useDocumentData(imagesDoc);
-  const mapDoc = firebase.firestore().collection('data').doc('map');
+  const mapDoc = dataCollection.doc('map');
   const [mapData] = useDocumentData(mapDoc);
 
   const canvasRef = useRef();
@@ -334,6 +335,8 @@ function Canvas() {
       {
         loaded &&
         <Tilebar
+          map={props.map}
+          dataCollection={dataCollection}
           tiles={tiles}
           tileIndex={tileIndex}
           setTileIndex={setTileIndex}

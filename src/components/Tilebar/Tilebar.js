@@ -11,10 +11,10 @@ function Tilebar(props) {
   async function uploadTileImage(index, file) {
     if (!file) return;
     // put file into storage
-    await firebase.storage().ref(`tiles/tile${index}`).put(file).then(snapshot => {
+    await firebase.storage().ref(`${props.map}/tile${index}`).put(file).then(snapshot => {
       // update tile url in firestore
       snapshot.ref.getDownloadURL().then(url => {
-        const imagesRef = firebase.firestore().collection('data').doc('images');
+        const imagesRef = props.dataCollection.doc('images');
         imagesRef.update({
           [`tile${index}`]: url
         });
