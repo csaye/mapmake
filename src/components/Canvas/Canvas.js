@@ -20,7 +20,6 @@ let gridPixels = canvasPixels / gridSize;
 let drawing = false;
 let lastX, lastY;
 const tileCount = 10;
-const maxFillDepth = 8;
 
 // initialize tile data as empty
 let tileData = '-'.repeat(gridSize * gridSize);
@@ -117,17 +116,21 @@ function Canvas(props) {
     setLoaded(true);
   }
 
-  // recursive fill, modifying fill indexes
-  function fillTile(index, replaceType, depth, fillIndexes) {
-    if (depth > maxFillDepth) return; // return if fill depth exceeded
-    if (tileData[index] !== replaceType) return; // return if not correct replace type
-    // append fill index
-    if (!fillIndexes.includes(index)) fillIndexes.push(index);
+  // recursive flood fill
+  function fillTile(index, replaceType) {
+    // return if not correct replace type
+    if (tileData[index] !== replaceType) return;
+    // fill tile
+    const fillX = index % gridSize;
+    const fillY = Math.floor(index / gridSize);
+    if (tileIndex === -1) clearTile(fillX, fillY);
+    else ctx.drawImage(tiles[tileIndex], fillX * gridPixels, fillY * gridPixels, gridPixels, gridPixels);
+    setTileData(index, tileIndex);
     // recurse on surrounding tiles
-    if (index - gridSize > 0) fillTile(index - gridSize, replaceType, depth + 1, fillIndexes); // above
-    if (index + gridSize < tileData.length) fillTile(index + gridSize, replaceType, depth + 1, fillIndexes); // below
-    if (index % gridSize !== 0) fillTile(index - 1, replaceType, depth + 1, fillIndexes); // left
-    if (index % gridSize !== gridSize - 1) fillTile(index + 1, replaceType, depth + 1, fillIndexes); // right
+    if (index - gridSize > 0) fillTile(index - gridSize, replaceType); // above
+    if (index + gridSize < tileData.length) fillTile(index + gridSize, replaceType); // below
+    if (index % gridSize !== gridSize - 1) fillTile(index + 1, replaceType); // right
+    if (index % gridSize !== 0) fillTile(index - 1, replaceType); // left
   }
 
   // sketches tiles to the canvas
@@ -155,18 +158,9 @@ function Canvas(props) {
     if (fill) {
       const index = gridY * gridSize + gridX;
       const clickedTile = tileData[index];
-      if (tileIndex === clickedTile) return; // if selected tile same as clicked, return
-      // get fill indexes
-      const fillIndexes = [];
-      fillTile(index, clickedTile, 0, fillIndexes);
-      // draw each fill index
-      for (const fillIndex of fillIndexes) {
-        const fillX = fillIndex % gridSize;
-        const fillY = Math.floor(fillIndex / gridSize);
-        if (tileIndex === -1) clearTile(fillX, fillY);
-        else ctx.drawImage(tiles[tileIndex], fillX * gridPixels, fillY * gridPixels, gridPixels, gridPixels);
-        setTileData(fillIndex, tileIndex);
-      }
+      // if selected tile same as clicked, return
+      if (tileIndex === clickedTile) return;
+      fillTile(index, clickedTile);
       return;
     }
 
