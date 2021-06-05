@@ -20,6 +20,7 @@ let gridPixels = canvasPixels / gridSize;
 let drawing = false;
 let lastX, lastY;
 const tileCount = 10;
+const maxFillDepth = 8;
 
 // initialize tile data as empty
 let tileData = '-'.repeat(gridSize * gridSize);
@@ -29,6 +30,7 @@ function Canvas(props) {
   const [gridSizeHook, setGridSizeHook] = useState(gridSize);
 
   const [loaded, setLoaded] = useState(false);
+  const [fill, setFill] = useState(false);
   const [tileIndex, setTileIndex] = useState(-1);
   const [tiles, setTiles] = useState(undefined);
 
@@ -103,7 +105,9 @@ function Canvas(props) {
           if (mapTile === '-') clearTile(x, y);
           else {
             const index = parseInt(mapTile);
-            ctx.drawImage(tiles[index], x * gridPixels, y * gridPixels, gridPixels, gridPixels);
+            if (tiles[index]) {
+              ctx.drawImage(tiles[index], x * gridPixels, y * gridPixels, gridPixels, gridPixels);
+            }
           }
         }
       }
@@ -113,12 +117,28 @@ function Canvas(props) {
     setLoaded(true);
   }
 
+  // recursive fill, modifying fill indexes
+  function fillTile(index, replaceType, depth, fillIndexes) {
+    if (depth > maxFillDepth) return; // return if fill depth exceeded
+    if (tileData[index] !== replaceType) return; // return if not correct replace type
+    // append fill index
+    if (!fillIndexes.includes(index)) fillIndexes.push(index);
+    // recurse on surrounding tiles
+    if (index - gridSize > 0) fillTile(index - gridSize, replaceType, depth + 1, fillIndexes); // above
+    if (index + gridSize < tileData.length) fillTile(index + gridSize, replaceType, depth + 1, fillIndexes); // below
+    if (index % gridSize !== 0) fillTile(index - 1, replaceType, depth + 1, fillIndexes); // left
+    if (index % gridSize !== gridSize - 1) fillTile(index + 1, replaceType, depth + 1, fillIndexes); // right
+  }
+
   // sketches tiles to the canvas
   async function sketch(mode, e) {
     // start drawing if mouse down
     if (mode === 'down') drawing = true;
-    // return if mouse moving and not drawing
-    else if (mode === 'move' && !drawing) return;
+    // if mouse moving
+    else if (mode === 'move') {
+      // return if not drawing or filling
+       if (!drawing || fill) return;
+    }
 
     // get current mouse position
     let mouseX = e.clientX - canvas.offsetLeft + window.scrollX;
@@ -131,19 +151,38 @@ function Canvas(props) {
     // if moving and same grid square as last, return
     if (mode === 'move' && gridX === lastX && gridY === lastY) return;
 
+    // if filling, start fill
+    if (fill) {
+      const index = gridY * gridSize + gridX;
+      const clickedTile = tileData[index];
+      if (tileIndex === clickedTile) return; // if selected tile same as clicked, return
+      // get fill indexes
+      const fillIndexes = [];
+      fillTile(index, clickedTile, 0, fillIndexes);
+      // draw each fill index
+      for (const fillIndex of fillIndexes) {
+        const fillX = fillIndex % gridSize;
+        const fillY = Math.floor(fillIndex / gridSize);
+        if (tileIndex === -1) clearTile(fillX, fillY);
+        else ctx.drawImage(tiles[tileIndex], fillX * gridPixels, fillY * gridPixels, gridPixels, gridPixels);
+        setTileData(fillIndex, tileIndex);
+      }
+      return;
+    }
+
     // update last position
     lastX = gridX;
     lastY = gridY;
 
-    // draw tile
+    // clear tile
     if (tileIndex === -1) clearTile(gridX, gridY);
+    // draw if tile exists
     else if (tiles[tileIndex]) {
       ctx.drawImage(tiles[tileIndex], gridX * gridPixels, gridY * gridPixels, gridPixels, gridPixels);
+      // update tile data
+      const index = gridY * gridSize + gridX;
+      setTileData(index, tileIndex);
     }
-
-    // update tile data
-    const index = gridY * gridSize + gridX;
-    setTileData(index, tileIndex);
   }
 
   // called after sketch ends
@@ -314,6 +353,8 @@ function Canvas(props) {
         loaded &&
         <Toolbar
           map={props.map}
+          fill={fill}
+          setFill={setFill}
           downloadPNG={downloadPNG}
           downloadJSON={downloadJSON}
           uploadJSON={uploadJSON}

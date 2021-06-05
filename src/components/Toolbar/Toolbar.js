@@ -6,6 +6,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PublishIcon from '@material-ui/icons/Publish';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import FormatColorFillIcon from '@material-ui/icons/FormatColorFill';
 
 import Popup from 'reactjs-popup';
 
@@ -71,6 +72,15 @@ function Toolbar(props) {
 
   return (
     <div className="Toolbar">
+      <div className="container">
+        <p>Fill</p>
+        <input
+          value={props.fill}
+          onChange={e => props.setFill(e.target.checked)}
+          type="checkbox"
+        />
+        <FormatColorFillIcon />
+      </div>
       <div className="container">
         <ImageIcon />
         <button onClick={props.downloadPNG}>
