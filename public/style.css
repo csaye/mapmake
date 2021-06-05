@@ -6,6 +6,12 @@ html, body, #root {
   height: 100%;
 }
 
-button, label, input {
+button {
   cursor: pointer;
+}
+
+.loading-text {
+  color: #ddd;
+  font-weight: bold;
+  font-size: 32px;
 }

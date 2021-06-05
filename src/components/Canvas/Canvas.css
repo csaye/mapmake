@@ -3,9 +3,3 @@
   margin: 20px;
   image-rendering: pixelated;
 }
-
-.Canvas .loading-text {
-  color: #ddd;
-  font-weight: bold;
-  font-size: 32px;
-}

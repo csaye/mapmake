@@ -54,7 +54,7 @@ function Select() {
 
   if (!userData) return (
     <div className="Select">
-      <p>Loading...</p>
+      <p className="loading-text">Loading...</p>
     </div>
   )
 
@@ -80,8 +80,14 @@ function Select() {
             />
             <button>Create Map</button>
           </form>
+          <button
+            className="signout-btn"
+            onClick={() => firebase.auth().signOut()}
+          >
+            <ExitToAppIcon />
+          </button>
         </> :
-        <p>Loading...</p>
+        <p className="loading-text">Loading...</p>
       }
     </div>
   );

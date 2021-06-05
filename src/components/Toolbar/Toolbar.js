@@ -2,10 +2,21 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PublishIcon from '@material-ui/icons/Publish';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import firebase from 'firebase/app';
 
 import './Toolbar.css';
 
 function Toolbar(props) {
+  async function exitMap() {
+    const uid = firebase.auth().currentUser.uid;
+    const userDoc = firebase.firestore().collection('users').doc(uid);
+    await userDoc.update({
+      map: ''
+    });
+  }
+
   return (
     <div className="Toolbar">
       <div className="container">
@@ -55,6 +66,9 @@ function Toolbar(props) {
           onChange={e => props.updateGridSize(e.target.value)}
         />
       </div>
+      <button onClick={() => exitMap()}>
+        <ExitToAppIcon />
+      </button>
     </div>
   );
 }

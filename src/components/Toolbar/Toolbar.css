@@ -5,6 +5,7 @@
   padding: 8px 4px 8px 4px;
   border-radius: 5px;
   display: flex;
+  align-items: center;
 }
 
 .Toolbar > .container {
@@ -29,6 +30,7 @@
   padding: 3px 3px 0 3px;
   background: #36393f;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 .Toolbar p {
