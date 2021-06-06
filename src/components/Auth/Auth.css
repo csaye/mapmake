@@ -1,5 +1,9 @@
 .Auth {
   color: #ddd;
+  max-width: 300px;
+  background: #202225;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 .Auth h1 {
@@ -29,11 +33,19 @@
   margin-top: 5px;
 }
 
+.Auth input {
+  border: 0;
+  padding: 2px 3px;
+  border-radius: 3px;
+  outline: none;
+  background: #36393f;
+  color: #ddd;
+}
+
 .Auth button[type="submit"] {
   margin-top: 10px;
 }
 
 .Auth .error-text {
-  color: red;
   margin: 5px 0;
 }

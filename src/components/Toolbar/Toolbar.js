@@ -159,7 +159,7 @@ function Toolbar(props) {
                 />
                 <button>Update Map</button>
               </form>
-              <form onSubmit={e => {
+              <form style={{marginTop: '5px'}} onSubmit={e => {
                 e.preventDefault();
                 addMember();
               }}>
