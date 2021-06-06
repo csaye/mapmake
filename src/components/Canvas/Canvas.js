@@ -20,6 +20,7 @@ let gridPixels = canvasPixels / gridSize;
 let drawing = false;
 let lastX, lastY;
 const tileCount = 10;
+let isFill = false;
 
 // initialize tile data as empty
 let tileData = '-'.repeat(gridSize * gridSize);
@@ -318,12 +319,26 @@ function Canvas(props) {
     setGridSizeHook(gridSize);
   }
 
-  // get canvas and context on start
+  function keyDown(e) {
+    const kc = e.keyCode;
+    if (kc === 189 || kc === 192) setTileIndex(-1);
+    else if (kc === 48) setTileIndex(9);
+    else if (kc > 48 && kc < 58) setTileIndex(kc - 49);
+    else if (kc === 70) setFill(!isFill);
+  }
+
+  // on start
   useEffect(() => {
+    // get canvas and context
     canvas = canvasRef.current;
     ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
+    // add keydown listener
+    document.addEventListener('keydown', keyDown);
+    return () => document.removeEventListener('keydown', keyDown);
   }, []);
+
+  useEffect(() => isFill = fill, [fill]);
 
   // load tile images when image data changes
   useEffect(() => {

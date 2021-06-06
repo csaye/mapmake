@@ -75,7 +75,7 @@ function Toolbar(props) {
       <div className="container">
         <p>Fill</p>
         <input
-          value={props.fill}
+          checked={props.fill}
           onChange={e => props.setFill(e.target.checked)}
           type="checkbox"
         />
