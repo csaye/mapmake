@@ -2,6 +2,8 @@
 
 A collaborative, online tilemap editor.
 
+Try it here: [csaye.com/mapmake](https://csaye.com/mapmake)
+
 ## Available Scripts
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
