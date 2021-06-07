@@ -73,13 +73,12 @@ function Toolbar(props) {
   return (
     <div className="Toolbar">
       <div className="container">
-        <p>Fill</p>
+        <FormatColorFillIcon />
         <input
           checked={props.fill}
           onChange={e => props.setFill(e.target.checked)}
           type="checkbox"
         />
-        <FormatColorFillIcon />
       </div>
       <div className="container">
         <ImageIcon />
@@ -107,7 +106,7 @@ function Toolbar(props) {
         />
       </div>
       <div className="container">
-        <p>Canvas: {props.canvasSize}px</p>
+        <p>{props.canvasSize}&times;{props.canvasSize} pixels</p>
         <input
           type="range"
           min="128"
@@ -118,7 +117,7 @@ function Toolbar(props) {
         />
       </div>
       <div className="container">
-        <p>Grid: {props.gridSize} tiles</p>
+        <p>{props.gridSize}&times;{props.gridSize} tiles</p>
         <input
           type="range"
           min="4"

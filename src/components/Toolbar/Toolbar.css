@@ -39,8 +39,16 @@
   cursor: pointer;
 }
 
+.Toolbar button:hover, .Toolbar label:hover {
+  background: #2f3136;
+}
+
 .Toolbar input {
   cursor: pointer;
+}
+
+.Toolbar input[type=checkbox] {
+  margin-top: 8px;
 }
 
 .Toolbar p {

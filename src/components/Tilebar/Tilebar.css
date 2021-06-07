@@ -43,16 +43,21 @@
   padding: 0;
   border: 0;
   height: 24px;
+  overflow: hidden;
   margin-bottom: 5px;
   background: transparent;
   box-sizing: border-box;
+  background: #36393f;
+  border-radius: 2px;
+}
+
+.Tilebar .tile-btn:hover {
+  background: #2f3136;
 }
 
 .Tilebar .tile-btn img, .Tilebar .tile-btn svg {
   width: 24px;
   height: 24px;
-  background: #36393f;
-  border-radius: 2px;
   color: #ddd;
   image-rendering: pixelated;
 }
