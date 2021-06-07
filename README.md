@@ -4,6 +4,24 @@ A collaborative, online tilemap editor.
 
 Try it here: [csaye.com/mapmake](https://csaye.com/mapmake)
 
+## About
+
+MapMake is a tool that lets teams collaborate online to build a tilemap. Upload tile sprites, add group members, and then draw your map synchronously with your teammates. After you're done, export as .png or .json for easy use.
+
+### Features
+- Create map and manage members
+- Adjust canvas and grid sizes
+- Synchronized map editing
+- Tile sketching and filling
+- Upload and change tile sprites
+- Export map as .png or .json
+- Import map from .json
+
+### Hotkeys
+- number keys - select tile
+- backtick (\`) and dash - erase
+- f - toggle fill
+
 ## Available Scripts
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
